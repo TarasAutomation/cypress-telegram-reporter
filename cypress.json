@@ -2,5 +2,17 @@
   "reporter": "cypress-multi-reporters",
   "reporterOptions": {
     "configFile": "reporter-config.json"
+  },
+  "env": {
+    "telegram": {
+      "includeStats": true,
+      "reportsPath": "./mocha-reports/*.json",
+      "finalReport": "final-report.json",
+      "statuses": {
+        "passed": "PASSED",
+        "failed": "FAILED",
+        "pending": "SKIPPED"
+      }
+    }
   }
 }

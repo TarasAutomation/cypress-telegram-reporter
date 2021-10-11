@@ -2,40 +2,38 @@ import * as del from 'del';
 import * as fs from 'fs';
 const { merge } = require('mochawesome-merge');
 
-export const postReportTelegram = (bot, chat_id: number|string, options?) => {
-    if (options?.mergeReports || true)
-        mergeReports();
-    const messages = formatReport();
+export const reportTelegram = async (bot, chat_id, options) => {
+    await buildReport(bot, chat_id, options?.reportsPath, options?.finalReport, options);
+    await cleanOldReports(options?.reportsPath);
+}
+
+const buildReport = async (bot, chat_id, reports = 'reports/*.json', mergedReport = 'merged-report.json', options) => {
+    await del(mergedReport, {force: true});
+    const report = await merge({files: [reports], output: mergedReport});
+    await fs.promises.writeFile(mergedReport, JSON.stringify(report, null, 4));
+    const messages = await formatReport(mergedReport, options);
     messages.forEach(message => {
         bot.sendMessage(chat_id, message, {parse_mode: "HTML"});
-    })
-    if (options?.cleanOldReports)
-        cleanOldReport();
+    });
 }
 
-const mergeReports = (reports = 'reports/*.json', mergedReport = 'merged-report.json') => {
-    del.sync(mergedReport);
-     merge({files: [reports], output: mergedReport}).then(report => {
-         fs.writeFileSync(mergedReport, JSON.stringify(report, null, 4));
-     });
+
+const cleanOldReports = async (reports = 'reports/*.json') => {
+    const deletedFiles = await del(reports, {force: true});
+    console.log(`Removed reports: ${deletedFiles.map(d => '\n' + d)}`);
 }
 
-const cleanOldReport = (reports = 'reports/*.json') => {
-    const deletedFiles = del.sync(reports);
-    console.log(`Removed reports: ${deletedFiles}`);
-}
-
-const formatReport = (reportFile = 'merged-report.json', options?) => {
-    let reportBuffer = fs.readFileSync(reportFile);
-    // @ts-ignore
+const formatReport = async (reportFile = 'merged-report.json', options) => {
+    let reportBuffer = await fs.promises.readFile(reportFile);
     const report = JSON.parse(reportBuffer);
-    const reportMessages: string[] = [];
-    if (options?.includeStats){
+    const reportMessages = [];
+    if (options?.includeStats) {
         let statsMessage = `Statistic for the Test Run:\n`;
         statsMessage += `Number of suites executed: ${report.stats.suites}\n`;
         statsMessage += `Number of Test Cases: ${report.stats.tests}\n`;
         statsMessage += `Passed: ${report.stats.passes}\n`;
         statsMessage += `Failed: ${report.stats.failures}\n`;
+        statsMessage += `Skipped: ${report.stats.pending}\n`;
         const testRunTime = new Date(report.stats.duration).toISOString().substr(11, 8);
         statsMessage += `Test run executed in ${testRunTime}\n`
         reportMessages.push(statsMessage);
@@ -49,7 +47,7 @@ const formatReport = (reportFile = 'merged-report.json', options?) => {
             resultMessage += `<b>${suite.title}</b>\n`
             const { tests } = suite;
             tests.forEach(test => {
-                resultMessage += `${test.title} ${getTestState(test.state)}\n`
+                resultMessage += `${test.title} ${getTestState(test.state, options?.statuses)}\n`
             })
         })
         reportMessages.push(resultMessage);
@@ -57,13 +55,13 @@ const formatReport = (reportFile = 'merged-report.json', options?) => {
     return reportMessages;
 }
 
-const getTestState = (state: string) => {
+const getTestState = (state, statuses) => {
     switch (state) {
         case 'passed':
-            return '😋'
+            return statuses?.passed || '😋'
         case 'failed':
-            return '😡'
+            return statuses?.failed ||'😡'
         case 'pending':
-            return '🥶'
+            return statuses?.pending ||'🥶'
     }
 }

@@ -2,10 +2,7 @@
   "name": "cypress-telegram-reporter",
   "version": "0.0.1",
   "description": "Package for generating a report in a telegram chat",
-  "main": "./bin/index.js",
-  "bin": {
-    "cypress-telegram-reporter": "./bin/index.js"
-  },
+  "main": "./src/config-handler.js",
   "scripts": {
     "test": "test",
     "report": "ts-node ./src/index.ts",

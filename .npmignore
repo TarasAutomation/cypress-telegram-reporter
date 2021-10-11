@@ -1,0 +1,10 @@
+cypress
+.idea
+reports
+mocha-reports
+.env
+.gitignore
+cypress.json
+merged-report.json
+reporter-config.json
+tsconfig.json
