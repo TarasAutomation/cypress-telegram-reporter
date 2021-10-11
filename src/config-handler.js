@@ -1,8 +1,6 @@
-import {config} from "dotenv";
-import {reportTelegram} from "./reporter/report-telegram";
-import { config } from "dotenv";
+const reportTelegram = require("./reporter/report-telegram");
 
-config();
+require('dotenv').config()
 const TelegramBot = require("node-telegram-bot-api");
 
 const handleConfig = (on, config) => {

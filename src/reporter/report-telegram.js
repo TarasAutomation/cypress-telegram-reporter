@@ -2,7 +2,7 @@ import * as del from 'del';
 import * as fs from 'fs';
 const { merge } = require('mochawesome-merge');
 
-export const reportTelegram = async (bot, chat_id, options) => {
+const reportTelegram = async (bot, chat_id, options) => {
     await buildReport(bot, chat_id, options?.reportsPath, options?.finalReport, options);
     await cleanOldReports(options?.reportsPath);
 }
@@ -12,9 +12,9 @@ const buildReport = async (bot, chat_id, reports = 'reports/*.json', mergedRepor
     const report = await merge({files: [reports], output: mergedReport});
     await fs.promises.writeFile(mergedReport, JSON.stringify(report, null, 4));
     const messages = await formatReport(mergedReport, options);
-    messages.forEach(message => {
-        bot.sendMessage(chat_id, message, {parse_mode: "HTML"});
-    });
+    for (const message of messages) {
+        await bot.sendMessage(chat_id, message, {parse_mode: "HTML"});
+    };
 }
 
 
@@ -65,3 +65,5 @@ const getTestState = (state, statuses) => {
             return statuses?.pending ||'🥶'
     }
 }
+
+module.exports = reportTelegram;
