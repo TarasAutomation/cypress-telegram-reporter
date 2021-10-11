@@ -1,5 +1,5 @@
-import * as del from 'del';
-import * as fs from 'fs';
+const del = require('del');
+const fs = require('fs');
 const { merge } = require('mochawesome-merge');
 
 const reportTelegram = async (bot, chat_id, options) => {

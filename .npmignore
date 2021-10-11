@@ -6,5 +6,6 @@ mocha-reports
 .gitignore
 cypress.json
 merged-report.json
+final-report.json
 reporter-config.json
 tsconfig.json
