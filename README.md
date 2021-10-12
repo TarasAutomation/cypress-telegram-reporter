@@ -23,6 +23,7 @@ Create .env file in your project directory if you don't have one.
 6. Open your channel and copy invite link
 7. Send this link to any bot that can give you the chat ID (e.g. @username_to_id_bot)
 8. Store this chat ID in the .env variable - CHAT_ID
+9. Add your Bot as an Admin to the Report Channel (So it can post reports there)
 
 Our reporting channel is now all setup.
 
