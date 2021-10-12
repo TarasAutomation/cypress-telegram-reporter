@@ -1,6 +1,6 @@
 {
   "name": "cypress-telegram-reporter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Package for generating a report in a telegram chat",
   "main": "./src/config-handler.js",
   "scripts": {

@@ -8,10 +8,10 @@ const handleConfig = (on, config) => {
     const token = process.env.BOT_TOKEN || telegram.botToken;
     const chatId = process.env.CHAT_ID || telegram.chatId;
     const options = {
-        includeStats: telegram.includeStats,
-        statuses: telegram.statuses,
-        reportsPath: telegram.reportsPath,
-        finalReport: telegram.finalReport
+        includeStats: telegram?.includeStats,
+        statuses: telegram?.statuses,
+        reportsPath: telegram?.reportsPath,
+        finalReport: telegram?.finalReport
     }
     if (token && chatId) {
         const bot = new TelegramBot(token, {polling: true});
